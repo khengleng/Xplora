@@ -1,14 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs", "npm"]
+
 [phases.build]
 cmds = ["cd portal && npm install && npm run build"]
 
 [phases.start]
 cmds = ["cd portal && npm start"]
-
-[phases.setup]
-nixPkgs = ["nodejs", "npm"]
-
-[static]
-nixPkgs = ["nodejs", "npm"]
 
 [variables]
 NODE_ENV = "production"
