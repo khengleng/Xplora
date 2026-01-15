@@ -1,10 +1,10 @@
-name: CI
+name: Database CI
 on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      postgres: { image: 'postgres:16-alpine', env: { POSTGRES_PASSWORD: test }, ports: ['5432:5432'] }
+      postgres: { image: postgres:16-alpine, env: { POSTGRES_PASSWORD: test }, ports: [5432:5432] }
     steps:
       - uses: actions/checkout@v4
       - run: |
