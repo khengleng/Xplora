@@ -18,35 +18,41 @@ export async function POST(request: Request, { params }: Params) {
     }
 
     const body = await request.json();
-    const durationMinutes = body.durationMinutes || 30;
+    const rejectionReason = body.reason || "No reason provided";
 
-    const { rows } = await query<{ success: boolean; message: string }>(
-      "SELECT * FROM approve_request($1, $2, $3)",
-      [id, Number(user.id), durationMinutes]
+    // Update request status to REJECTED
+    const { rows } = await query(
+      `UPDATE field_access_requests 
+       SET status = 'REJECTED', 
+           reviewed_by = $1, 
+           reviewed_at = NOW(), 
+           rejection_reason = $2 
+       WHERE id = $3 AND status = 'PENDING'
+       RETURNING id`,
+      [Number(user.id), rejectionReason, id]
     );
 
-    const result = rows[0];
-    if (!result?.success) {
+    if (rows.length === 0) {
       return NextResponse.json(
-        { error: result?.message ?? "Failed to approve request" },
-        { status: 400 }
+        { error: "Request not found or already processed" },
+        { status: 404 }
       );
     }
 
     await logAuditEvent({
       user,
-      eventType: "FIELD_REQUEST_APPROVE",
+      eventType: "FIELD_REQUEST_REJECT",
       eventCategory: "ACCESS_REQUEST",
       success: true,
       tableName: "field_access_requests",
       recordId: id,
       accessedFields: null,
       details: {
-        durationMinutes,
+        reason: rejectionReason,
       },
     });
 
-    return NextResponse.json({ success: true, message: result.message });
+    return NextResponse.json({ success: true, message: "Request rejected" });
   } catch (error: any) {
     return NextResponse.json(
       { error: error.message || "Unauthorized" },
@@ -54,4 +60,3 @@ export async function POST(request: Request, { params }: Params) {
     );
   }
 }
-
