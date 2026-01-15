@@ -1,0 +1,13 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres: { image: 'postgres:16-alpine', env: { POSTGRES_PASSWORD: test }, ports: ['5432:5432'] }
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/local/bin/
+          migrate -path ./migrations -database "postgresql://postgres:test@localhost:5432/postgres?sslmode=disable" up
