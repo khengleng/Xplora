@@ -1,0 +1,12 @@
+DROP FUNCTION IF EXISTS record_login_attempt;
+DROP VIEW IF EXISTS pending_requests_dashboard;
+DROP FUNCTION IF EXISTS get_my_requests;
+DROP FUNCTION IF EXISTS expire_stale_access;
+DROP FUNCTION IF EXISTS reject_request;
+DROP FUNCTION IF EXISTS approve_request;
+DROP FUNCTION IF EXISTS submit_field_request;
+DROP FUNCTION IF EXISTS has_privileged_access;
+DROP FUNCTION IF EXISTS get_user_role;
+DROP FUNCTION IF EXISTS get_pending_request_id;
+DROP FUNCTION IF EXISTS get_access_expiry;
+DROP FUNCTION IF EXISTS has_active_access;

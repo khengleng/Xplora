@@ -1,0 +1,48 @@
+name: Database CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths: ['migrations/**', 'scripts/**']
+  pull_request:
+    paths: ['migrations/**', 'scripts/**']
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: xplora_test
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/local/bin/
+      - name: Run migrations
+        run: migrate -path ./migrations -database "postgresql://postgres:testpass@localhost:5432/xplora_test?sslmode=disable" up
+      - name: Test rollback
+        run: |
+          migrate -path ./migrations -database "postgresql://postgres:testpass@localhost:5432/xplora_test?sslmode=disable" down -all
+          migrate -path ./migrations -database "postgresql://postgres:testpass@localhost:5432/xplora_test?sslmode=disable" up
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/local/bin/
+      - name: Deploy to production
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: migrate -path ./migrations -database "${DATABASE_URL}" up

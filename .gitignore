@@ -1,0 +1,37 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets/
+
+# Database
+*.sql.bak
+*.dump
+*.backup
+data/
+
+# Logs
+*.log
+logs/
+
+# Dependencies
+node_modules/
+.next/
+vendor/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+dist/
+build/
+out/

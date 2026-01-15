@@ -1,0 +1,9 @@
+path "transit/encrypt/customer-data" { capabilities = ["create", "update"] }
+path "transit/decrypt/customer-data" { capabilities = ["create", "update"] }
+path "transit/encrypt/financial-data" { capabilities = ["create", "update"] }
+path "transit/decrypt/financial-data" { capabilities = ["create", "update"] }
+path "transit/keys/customer-data" { capabilities = ["read"] }
+path "transit/keys/financial-data" { capabilities = ["read"] }
+path "secret/data/xplora/config" { capabilities = ["read"] }
+path "auth/token/renew-self" { capabilities = ["update"] }
+path "auth/token/lookup-self" { capabilities = ["read"] }
