@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { Pool, QueryResultRow } from "pg";
 import type { SensitiveField } from "@/types";
 
 const connectionString =
@@ -8,7 +8,7 @@ export const pool = new Pool({
   connectionString,
 });
 
-export async function query<T = unknown>(
+export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
   params?: unknown[]
 ): Promise<{ rows: T[] }> {

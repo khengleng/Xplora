@@ -1,9 +1,8 @@
-import { getServerSession } from "next-auth";
-import { authConfig } from "@/app/api/auth/[...nextauth]/route";
-import type { SessionUser, UserRole } from "@/types";
+import { auth } from "@/auth";
+import type { SessionUser } from "@/types";
 
 export async function getSession() {
-  return getServerSession(authConfig);
+  return auth();
 }
 
 export async function getCurrentUser(): Promise<SessionUser | null> {
@@ -20,7 +19,7 @@ export async function requireAuth(): Promise<SessionUser> {
 }
 
 export function canApprove(role?: string): boolean {
-  return ['SUPERVISOR', 'MANAGER', 'VVIP', 'ADMIN'].includes(role || '');
+  return ["SUPERVISOR", "MANAGER", "VVIP", "ADMIN"].includes(role || "");
 }
 
 export function requireApprover(user: SessionUser | null): void {
