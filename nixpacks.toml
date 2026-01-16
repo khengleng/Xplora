@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs-22"]
+nixPkgs = ["nodejs_22"]
 
 [phases.build]
 cmds = ["cd portal && npm install && npm run build"]
